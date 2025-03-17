@@ -2,9 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation"; 
+import { useEffect, useState } from "react";
 
 const NavBar = () => {
   const pathname = usePathname();
+  const [activePath, setActivePath] = useState<string | null>(null);
+
+  useEffect(() => {
+    setActivePath(pathname); 
+  }, [pathname]);
 
   return (
     <nav>
@@ -20,7 +26,7 @@ const NavBar = () => {
               <Link
                 href={link.href}
                 className={`block py-2 px-3 rounded-sm md:p-0 
-                  ${pathname === link.href ? "text-neutral-500 font-bold" : "text-white"}`}
+                  ${activePath === link.href ? "text-neutral-500" : "text-white"}`}
               >
                 {link.name}
               </Link>

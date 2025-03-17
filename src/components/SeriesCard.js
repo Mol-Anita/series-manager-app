@@ -32,5 +32,5 @@ const SeriesCard = ({ isOnMaster, image, title, genres, platform }) => {
   );
 };
 
-export default SeriesComponent;
+export default SeriesCard;
 
