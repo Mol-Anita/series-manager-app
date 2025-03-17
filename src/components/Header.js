@@ -5,7 +5,7 @@ import NavBar from "../components/NavBar";
 
 const Header = () => {
   return (
-    <section className="border-[0.05px] border-neutral-800">
+    <section className="border-b-[0.05px] border-neutral-800">
       <div className="px-10 py-8 text-xl">
         <div className="flex flex-row justify-between pb-3">
           <h1 className="font-semibold">Series Manager App</h1>
@@ -13,7 +13,7 @@ const Header = () => {
         </div>
 
         <NavBar />
-      </div>
+        </div>
     </section>
   );
 };
