@@ -26,7 +26,7 @@ const SeriesCard = ({ isOnMaster, image, title, genres, platform }) => {
       <div className="pt-2 text-left">
         <h1 className="font-bold">{title}</h1>
         <h2 className="font-light text-sm pb-3">{platform}</h2>
-        <h3 className="font-normal text-sm text-neutral-400">{genres}</h3>
+        <h3 className="font-normal text-sm text-neutral-400">{genres.join(', ')}</h3>
       </div>
     </div>
   );

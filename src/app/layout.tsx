@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "../components/Header";
+import QueryProvider from "../components/QueryProvider"; // Import new QueryProvider
 
 const inter = Inter({
   variable: "--font-inter",
@@ -34,8 +35,10 @@ export default function Layout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="antialiased">
-      <Header />
-        {children}
+        <QueryProvider>
+          <Header />
+          {children}
+        </QueryProvider>
       </body>
     </html>
   );

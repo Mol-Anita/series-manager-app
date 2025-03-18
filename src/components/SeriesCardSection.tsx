@@ -1,10 +1,16 @@
 "use client";
 
 import SeriesCard from "./SeriesCard";
-import Series from "../mock/database.json";
+import {Series} from "@/types/series";
 
-const SeriesCardSection = ({ heading, seriesList }) => {
-  const series = Series.slice(0, 4);
+
+type SeriesCardSectionProps = {
+    heading: string;
+    seriesList: Series[];
+}
+
+const SeriesCardSection = ({ heading, seriesList }: SeriesCardSectionProps) => {
+  const series = seriesList.slice(0, 4);
 
   return (
     <section className="bg-neutral-950 p-4 my-5"> 
@@ -12,16 +18,15 @@ const SeriesCardSection = ({ heading, seriesList }) => {
         <h2 className="text-white mb-4 font-semibold text-2xl pb-3">{heading}</h2> 
       
       <ul className="flex flex-row justify-between px-6">
-        {series.map((serie) => {
-            console.log(serie.platform);
+        {series.map((series) => {
           return (
-            <li key={serie.id} className="flex-none">
+            <li key={series.id} className="flex-none">
               <SeriesCard
                 isOnMaster={true}
-                title={serie.title}
-                image={serie.img}
-                genres={serie.genre}
-                platform={serie.platform}
+                title={series.title}
+                image={series.img}
+                genres={series.genre}
+                platform={series.platform}
               />
             </li>
           );

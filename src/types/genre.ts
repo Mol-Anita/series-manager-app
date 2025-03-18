@@ -1,0 +1,17 @@
+export type Genre =
+  | "Crime"
+  | "Drama"
+  | "Thriller"
+  | "Sci-Fi"
+  | "Horror"
+  | "Mystery"
+  | "Fantasy"
+  | "Adventure"
+  | "Action"
+  | "Comedy"
+  | "Romance"
+  | "Dark Comedy"
+  | "Animation"
+  | "Anthology"
+  | "Biography"
+  | "Anime";
