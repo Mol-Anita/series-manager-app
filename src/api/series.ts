@@ -1,6 +1,7 @@
 import { series } from "./mockdata/series";
 import { Genre } from "@/types/genre";
-
+import { MultiSelect } from 'primereact/multiselect';
+        
 export type SeriesFilters = {
   genres?: Genre[];
   search?: string;
@@ -11,14 +12,9 @@ export const fetchProducts = async (options?: SeriesFilters) => {
 
   let filteredProducts = series;
   console.log(series);
-  if (options?.genres) {
+  if (options?.genres && options?.genres.length != 0) {
     filteredProducts = filteredProducts.filter((product) => {
-      product.genre.forEach(genre => {
-        if (options?.genres && genre in options.genres){
-            return true;
-        }
-        return false;
-      }); 
+      return product.genre.some((genre) => options.genres!.includes(genre));
     });
   }
 

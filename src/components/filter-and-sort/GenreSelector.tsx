@@ -1,8 +1,9 @@
 import React, { ChangeEvent } from "react";
 import { Genre } from "@/types/genre";
-
+import { MultiSelect } from 'primereact/multiselect';
+        
 type GenreSelectorProps = {
-  value: Genre[]; 
+  value: Genre[];
   onChange: (genres: Genre[]) => void;
 };
 
@@ -26,20 +27,31 @@ const genres: Genre[] = [
 ];
 
 const GenreSelector: React.FC<GenreSelectorProps> = ({ value, onChange }) => {
-  const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const selectedGenres = Array.from(event.target.selectedOptions, (option) => option.value as Genre);
-    onChange(selectedGenres); 
+  const handleDropdownChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const selectedOptions = Array.from(event.target.selectedOptions).map(
+      (option) => option.value as Genre
+    );
+    onChange(selectedOptions); // Pass the updated list to the parent
   };
 
   return (
     <div>
-      <select multiple value={value} onChange={handleChange}>
-        {genres.map((genre) => (
-          <option key={genre} value={genre}>
-            {genre}
-          </option>
-        ))}
-      </select>
+      <label
+        htmlFor="genre-selector"
+        className="block mb-2 text-sm font-medium text-white"
+      >
+        Select Genres
+      </label>
+      <MultiSelect
+        id="genre-selector"
+        value={value}
+        options={genres}
+        onChange={(e) => onChange(e.value)}
+        optionLabel="label"
+        placeholder="Select Genres"
+        display="chip" 
+        className="w-full p-multiselect"
+      />
     </div>
   );
 };
