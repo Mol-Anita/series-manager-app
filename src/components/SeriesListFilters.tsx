@@ -14,26 +14,29 @@ type SeriesListFiltersProps = {
 };
 
 const SeriesListFilters = ({ onChange }: SeriesListFiltersProps) => {
-  const [search, setSearch] = useState<SeriesFilters["search"]>();
+  const [search, setSearch] = useState<SeriesFilters["search"]>("");
   const debouncedSearch = useDebounce(search);
 
-  const [genres, setGenres] = useState<SeriesFilters["genres"]>();
-  const [seasonNumber, setSeasonNumber] = useState<SeriesFilters["seasonNumber"]>();
+  const [genres, setGenres] = useState<SeriesFilters["genres"]>([]);
+  const [seasonNumber, setSeasonNumber] = useState<SeriesFilters["seasonNumber"]>(0);
 
   useEffect(() => {
     onChange({ genres, seasonNumber, search: debouncedSearch });
   }, [genres, debouncedSearch, seasonNumber]);
 
   return (
-    <section className="flex flex-row justify-between">
+    <section className="flex flex-wrap justify-between gap-4 border-b-[0.05px] border-neutral-800 p-4">
       <SearchBar
         value={search}
         onChange={(e: {
-          target: { value: SetStateAction<string | undefined> };
+          target: { value: string };
         }) => setSearch(e.target.value)}
       />
-      <GenreSelector value={genres || []} onChange={setGenres} />
-      <MinSeasonSelector value={seasonNumber || 0} onChange={setSeasonNumber} />
+      <div className="flex flex-wrap">
+        <GenreSelector value={genres || []} onChange={setGenres} />
+        <MinSeasonSelector value={seasonNumber || 0} onChange={setSeasonNumber} />
+      </div>
+      
     </section>
   );
 };

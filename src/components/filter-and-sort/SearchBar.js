@@ -1,14 +1,17 @@
 "use client";
 
+import { ChangeEventHandler } from "react";
+
+
 const SearchBar = ({ value, onChange }) => {
   return (
-    <div className="mt-2 w-12">
+    <div className="w-80">
       <input
         type="text"
         value={value}
         onChange={onChange}
-        placeholder=""
-        className="block w-80 rounded-full bg-neutral-800 px-4 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2  sm:text-sm/6"
+        placeholder="Search"
+        className="block w-full h-9 rounded-full bg-neutral-900 px-4 py-1.5 text-white text-sm/6 placeholder:text-gray-400 outline-1 -outline-offset-1 outline-neutral-700  focus:outline-2 focus:-outline-offset-2"
       />
     </div>
   );

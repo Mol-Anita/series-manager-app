@@ -24,7 +24,7 @@ export const fetchProducts = async (options?: SeriesFilters) => {
     });
   }
 
-  if (options?.search) {
+  if (options?.search && options.search.length > 0) {
     filteredProducts = filteredProducts.filter((product) => {
       return product.title.toLowerCase().includes(options.search!.toLowerCase());
     });

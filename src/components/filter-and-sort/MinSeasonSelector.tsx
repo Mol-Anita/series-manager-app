@@ -14,8 +14,12 @@ const MinSeasonSelector: React.FC<MinSeasonSelectorProps> = ({ value, onChange }
       };
 
     return (
-    <div>
-      <select value={value} onChange={handleChange}>
+    <div className="px-2.5">
+      <select value={value} 
+      onChange={handleChange}
+      className="inline-flex rounded-full bg-transparent w-60 h-9 px-3 py-1.5 text-white font-light text-sm/6 outline-1 -outline-offset-1 outline-neutral-700"
+      >
+        <option value={0} disabled>Number of seasons</option>
         {numbers.map((number) => (
           <option key={number} value={number}>
             {`${number}+ Seasons`}
