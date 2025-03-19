@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchProducts, SeriesFilters } from "../../api/series";
 import SeriesList from "../../components/SeriesList";
-import SeriesListFilters from "../../components/SeriesListFilters";
+import SeriesListFilters from "../../components/filter-and-sort/SeriesListFilters";
 import { useState, useEffect } from "react";
 
 const MySeries = () => {

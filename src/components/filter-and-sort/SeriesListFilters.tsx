@@ -2,9 +2,9 @@ import { SeriesFilters } from "@/api/series";
 import { useDebounce } from "@/hooks/useDebounce";
 import { SetStateAction, useEffect, useState } from "react";
 
-import SearchBar from "./filter-and-sort/SearchBar";
-import GenreSelector from "./filter-and-sort/GenreSelector";
-import MinSeasonSelector from "./filter-and-sort/MinSeasonSelector";
+import SearchBar from "./SearchBar";
+import GenreSelector from "./GenreSelector";
+import MinSeasonSelector from "./MinSeasonSelector";
 import { Genre } from "@/types/genre";
 import { parse } from "path";
 
