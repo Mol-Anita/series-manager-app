@@ -1,11 +1,20 @@
 import { series } from "./mockdata/series";
-import { Genre } from "@/types/genre";
-import { MultiSelect } from 'primereact/multiselect';
-        
+import { SeriesStatus } from "@/types/seriesStatus";
+      
 export type SeriesFilters = {
-  genres?: Genre[];
+  genres?: string[];
   search?: string;
   seasonNumber?: number;
+};
+
+
+type SeriesData = {
+    title: string;
+    image: string;
+    genre: string[];
+    description: string;
+    totalSeasons: number;
+    status: SeriesStatus;
 };
 
 export const fetchProducts = async (options?: SeriesFilters) => {
@@ -30,4 +39,23 @@ export const fetchProducts = async (options?: SeriesFilters) => {
     });
   }
   return filteredProducts;
+};
+
+export const saveSeries = async (data: SeriesData) => {
+  const newId = series[series.length - 1].id + 1;
+  const date = new Date();
+  const addDate = `${date.getMonth()}-${date.getFullYear()}-${date.getTime()}`;
+
+  const newSeries = {
+    id: newId,
+    title: data.title,
+    genre: data.genre,
+    description: data.description,
+    img: data.image,
+    totalSeasons: data.totalSeasons,
+    status: data.status,
+    addDate: addDate,
+    isFavourite: false,
+  };
+  series.push(newSeries);
 };

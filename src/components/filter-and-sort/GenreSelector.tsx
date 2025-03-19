@@ -3,7 +3,7 @@ import { Genre } from "@/types/genre";
 import { MultiSelect } from 'primereact/multiselect';
 
 type GenreSelectorProps = {
-  value: Genre[];
+  value: string[];
   onChange: (genres: Genre[]) => void;
 };
 
