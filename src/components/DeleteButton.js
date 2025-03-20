@@ -2,7 +2,7 @@ import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 import { deleteSeriesById } from "@/api/series";
 
-const DeleteButton = ({ seriesId, onDelete }) => { // Destructure props
+const DeleteButton = ({ seriesId, onDelete }) => { 
   const handleClick = (close) => {
     try {
       onDelete(seriesId);
@@ -27,7 +27,7 @@ const DeleteButton = ({ seriesId, onDelete }) => { // Destructure props
             <div className="flex flex-row justify-center gap-6 px-7">
               <button 
                 className="rounded-2xl px-4 py-0.5 text-red-500 bg-neutral-700"
-                onClick={() => handleClick(close)} // Pass close function
+                onClick={() => handleClick(close)} 
               >
                 Delete
               </button>

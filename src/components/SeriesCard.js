@@ -14,7 +14,9 @@ const SeriesCard = ({ isOnMaster, id, image, title, genres, seasons, onDelete}) 
         </div>
       )}
 
+      
       <div className="flex justify-center overflow-hidden">
+      <Link href={`series/${id}`}>
         <Image
           src={image}
           width={230}
@@ -22,7 +24,10 @@ const SeriesCard = ({ isOnMaster, id, image, title, genres, seasons, onDelete}) 
           alt={title}
           className="object-cover max-w-[230px] max-h-[335px] scale-95"
         />
+        </Link>
       </div>
+      
+      
 
       <div className="pt-2 text-left">
         <h1 className="font-bold">{title}</h1>

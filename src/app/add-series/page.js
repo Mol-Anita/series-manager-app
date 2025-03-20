@@ -3,6 +3,8 @@
 import AddSeriesForm from "@/components/forms/AddSeriesForm";
 
 const AddSeries = () => {
+
+  
   return (
     <div className="flex justify-center">
       <AddSeriesForm />

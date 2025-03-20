@@ -7,7 +7,6 @@ export type SeriesFilters = {
   seasonNumber?: number;
 };
 
-
 type SeriesData = {
     title: string;
     image: string;
