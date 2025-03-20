@@ -49,7 +49,7 @@ export const getSeriesById = async (id: number) =>{
 }
 
 export const saveSeries = async (data: SeriesData) => {
-  const newId = series[series.length - 1].id + 1;
+  const newId = seriesList[seriesList.length - 1].id + 1;
   const date = new Date();
   const addDate = `${date.getMonth()}-${date.getFullYear()}-${date.getTime()}`;
 
@@ -64,7 +64,7 @@ export const saveSeries = async (data: SeriesData) => {
     addDate: addDate,
     isFavourite: false,
   };
-  series.push(newSeries);
+  seriesList.push(newSeries);
 };
 
 export const updateSeriesById = async (id : number, data: SeriesData) => {
