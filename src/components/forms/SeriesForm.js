@@ -7,22 +7,14 @@ import ImageInput from "./ImageInput";
 import StatusInput from "./StatusInput";
 import { useRouter } from "next/navigation";
 
-const InputForms = ({ title, apiCall }) => {
+const InputForms = ({ title, apiCall, defaultValues, isEditForm, id=undefined }) => {
   const router = useRouter();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      title: "",
-      genre: "",
-      description: "",
-      image: "",
-      totalSeasons: "",
-      status: "Currently Watching",
-    },
+  } = useForm({defaultValues,
   });
 
   const convertToBase64 = (file) => {
@@ -53,7 +45,11 @@ const InputForms = ({ title, apiCall }) => {
 
       console.log("Submitting Data:", formattedData);
 
-      await apiCall(formattedData);
+      if (id) {
+        await apiCall(id, formattedData); 
+      } else {
+        await apiCall(formattedData);
+      }
       router.push("/my-series");
     } catch (error) {
       console.error("Form submission error:", error);
@@ -102,6 +98,14 @@ const InputForms = ({ title, apiCall }) => {
     return true;
   };
 
+  const imageConstraints = isEditForm ? {} : {
+    required: "Cover image is required",
+    pattern: {
+      value: /\.(jpg|jpeg|png|gif|webp)$/i,
+      message: "Invalid image format",
+    }
+  } ;
+
   return (
     <div className="flex flex-col p-14 bg-stone-900 rounded-2xl w-3xl h-fit">
       <h1 className=" font-bold text-3xl">{title}</h1>
@@ -141,13 +145,7 @@ const InputForms = ({ title, apiCall }) => {
           <ImageInput
             label="Cover image"
             id="image"
-            inputProps={register("image", {
-              required: "Cover image is required",
-              pattern: {
-                value: /\.(jpg|jpeg|png|gif|webp)$/i,
-                message: "Invalid image format",
-              },
-            })}
+            inputProps={register("image", imageConstraints)}
             errors={errors}
           />
           <InputField
@@ -171,7 +169,7 @@ const InputForms = ({ title, apiCall }) => {
             })}
           />
           <div className="flex justify-center">
-            <SubmitButton text="Add series" />
+            <SubmitButton text={title} />
           </div>
         </form>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchProducts, SeriesFilters } from "../../api/series";
+import { fetchSeries, SeriesFilters } from "../../api/series";
 import SeriesList from "../../components/SeriesList";
 import SeriesListFilters from "../../components/filter-and-sort/SeriesListFilters";
 import { useState, useEffect } from "react";
@@ -13,7 +13,7 @@ const MySeries = () => {
 
   const { data, isFetching } = useQuery({
     queryKey: ['series', genres?.join(','), search, seasonNumber],
-    queryFn: () => fetchProducts({ genres, search, seasonNumber}),
+    queryFn: () => fetchSeries({ genres, search, seasonNumber}),
   });
 
   useEffect(() => {

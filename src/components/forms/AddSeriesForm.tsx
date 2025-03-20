@@ -1,30 +1,19 @@
 "use client";
 
-import { Genre } from "@/types/genre";
-import { SeriesStatus } from "@/types/seriesStatus";
-import { useForm, SubmitHandler } from "react-hook-form";
 import SeriesForm from "./SeriesForm";
-import { saveSeries } from "@/api/series"
-
-type Inputs = {
-  id: number;
-  genre: string;
-  title: string;
-  description: string;
-  image: string;
-  totalSeasons: number;
-  status: SeriesStatus;
-};
+import { saveSeries } from "@/api/series";
 
 const AddSeriesForm = () => {
-  
+  const defaultValues = {
+    title: "",
+    genre: "",
+    description: "",
+    image: "",
+    totalSeasons: "",
+    status: "Currently Watching",
+  };
 
-  return (
-    <SeriesForm
-      title="Add series"
-      apiCall={saveSeries}
-    />
-  );
+  return <SeriesForm title="Add series" apiCall={saveSeries} defaultValues={defaultValues} isEditForm={false}/>;
 };
 
 export default AddSeriesForm;

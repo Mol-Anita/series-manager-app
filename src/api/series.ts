@@ -17,10 +17,12 @@ type SeriesData = {
     status: SeriesStatus;
 };
 
-export const fetchProducts = async (options?: SeriesFilters) => {
+let seriesList = [...series];
 
-  let filteredProducts = series;
-  console.log(series);
+export const fetchSeries = async (options?: SeriesFilters) => {
+
+  let filteredProducts = seriesList;
+
   if (options?.genres && options?.genres.length != 0) {
     filteredProducts = filteredProducts.filter((product) => {
       return product.genre.some((genre) => options.genres!.includes(genre));
@@ -41,6 +43,11 @@ export const fetchProducts = async (options?: SeriesFilters) => {
   return filteredProducts;
 };
 
+export const getSeriesById = async (id: number) =>{
+
+   return seriesList.find((series) => series.id === Number(id));
+}
+
 export const saveSeries = async (data: SeriesData) => {
   const newId = series[series.length - 1].id + 1;
   const date = new Date();
@@ -59,3 +66,41 @@ export const saveSeries = async (data: SeriesData) => {
   };
   series.push(newSeries);
 };
+
+export const updateSeriesById = async (id : number, data: SeriesData) => {
+  const index = seriesList.findIndex((series) => series.id === Number(id));
+
+  const editedSeries = seriesList[index];
+
+  if (editedSeries.title != data.title){
+    editedSeries.title = data.title;
+  }
+
+  if (editedSeries.genre != data.genre){
+    editedSeries.genre = data.genre;
+  }
+  if (editedSeries.description != data.description){
+    editedSeries.description = data.description;
+  }
+  if (editedSeries.totalSeasons != data.totalSeasons){
+    editedSeries.totalSeasons = data.totalSeasons;
+  }
+  if (editedSeries.status != data.status){
+    editedSeries.status = data.status;
+  }
+
+  if (data.image !== ""){
+    editedSeries.img = data.image;
+  }
+
+  seriesList[index] = editedSeries;
+
+}
+
+export const deleteSeriesById = async (id: number) => {
+  const index = seriesList.findIndex(series => series.id === id);
+if (index !== -1) {
+  seriesList.splice(index, 1);
+}
+console.log(`Series with ID ${id} deleted successfully.`);
+}
