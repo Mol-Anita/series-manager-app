@@ -98,9 +98,11 @@ export const updateSeriesById = async (id : number, data: SeriesData) => {
 }
 
 export const deleteSeriesById = async (id: number) => {
-  const index = seriesList.findIndex(series => series.id === id);
+  const index = seriesList.findIndex(series => series.id === Number(id));
 if (index !== -1) {
   seriesList.splice(index, 1);
+} else{
+  throw new Error("Error occurred at delete");
 }
 console.log(`Series with ID ${id} deleted successfully.`);
 }

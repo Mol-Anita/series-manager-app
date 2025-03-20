@@ -6,11 +6,11 @@ import { Series } from "@/types/series";
 
 type SeriesCardListProps = {
   seriesList: Series[];
+  onDelete: (id: number) => void;
 };
 
-const SeriesList = ({ seriesList }: SeriesCardListProps) => {
+const SeriesList = ({ seriesList, onDelete }: SeriesCardListProps) => {
   const series = seriesList;
-
   return (
     <section className="bg-neutral-950 p-4 my-5">
       <div className="p-4">
@@ -28,6 +28,7 @@ const SeriesList = ({ seriesList }: SeriesCardListProps) => {
                   image={series.img}
                   genres={series.genre}
                   seasons={series.totalSeasons}
+                  onDelete={onDelete}
                 />
               </li>
             );

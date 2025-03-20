@@ -29,6 +29,7 @@ const SeriesCardSection = ({ heading, seriesList }: SeriesCardSectionProps) => {
                   image={series.img}
                   genres={series.genre}
                   seasons={series.totalSeasons}
+                  onDelete={undefined}
                 />
               </li>
             );
