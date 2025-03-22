@@ -10,7 +10,6 @@ type SeriesCardListProps = {
 };
 
 const SeriesList = ({ seriesList, onDelete }: SeriesCardListProps) => {
-  const series = seriesList;
   return (
     <section className="bg-neutral-950 p-4 my-5">
       <div className="p-4">
@@ -18,7 +17,7 @@ const SeriesList = ({ seriesList, onDelete }: SeriesCardListProps) => {
           <li key="000" className="flex-none m-2">
             <AddCard />
           </li>
-          {series.map((series: Series) => {
+          {seriesList.map((series: Series) => {
             return (
               <li key={series.id} className="flex-none m-2">
                 <SeriesCard

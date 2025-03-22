@@ -10,16 +10,17 @@ const MySeries = () => {
   const [search, setSearch] = useState <SeriesFilters["search"] >();
   const [genres, setGenres] = useState <SeriesFilters["genres"] >();
   const [seasonNumber, setSeasonNumber] = useState < SeriesFilters["seasonNumber"] >();
-
+  const [sortBySeasons, setSortBySeasons] = useState <SeriesFilters["sortBySeasons"]>();
+  
   const { data, isFetching, refetch } = useQuery({
-    queryKey: ['series', genres?.join(','), search, seasonNumber],
-    queryFn: () => fetchSeries({ genres, search, seasonNumber}),
+    queryKey: ['series', genres?.join(','), search, seasonNumber, sortBySeasons],
+    queryFn: () => fetchSeries({ genres, search, seasonNumber, sortBySeasons}),
   });
 
   useEffect(() => {
-    console.log("Query Parameters:", { genres, seasonNumber, search });
+    console.log("Query Parameters:", { genres, seasonNumber, search, sortBySeasons });
     console.log("Fetched Data:", data);
-  }, [data, genres, search, seasonNumber]);
+  }, [data, genres, search, seasonNumber, sortBySeasons]);
 
   const handleDelete = (seriesId: number) => {
     deleteSeriesById(seriesId);
@@ -33,6 +34,7 @@ const MySeries = () => {
           setGenres(filters.genres);
           setSeasonNumber(filters.seasonNumber);
           setSearch(filters.search);
+          setSortBySeasons(filters.sortBySeasons);
         }}
       />
       <div>

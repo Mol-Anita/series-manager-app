@@ -6,7 +6,7 @@ import EditSeriesForm from "../../../components/forms/EditSeriesForm";
 const EditSeries = () => {
     const { id } = useParams();
     return(
-        <div>
+        <div className="flex justify-center">
             <EditSeriesForm seriesId={id}/>
         </div>
     );
