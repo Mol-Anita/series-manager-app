@@ -5,6 +5,7 @@ import Link from "next/link";
 import DeleteButton from "./DeleteButton";
 
 const SeriesCard = ({ isOnMaster, id, image, title, genres, seasons, onDelete}) => {
+  
   return (
     <div className="bg-neutral-900 text-white rounded-2xl flex flex-col p-5 w-[310px] h-[460px]">
       {!isOnMaster && (

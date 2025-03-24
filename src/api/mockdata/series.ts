@@ -1,4 +1,5 @@
 import { Series } from '@/types/series';
+import { SeriesStatus } from '@/types/seriesStatus';
 
 export const series: Series[] = [
   {
@@ -110,5 +111,23 @@ export const series: Series[] = [
     status: "Currently Watching",
     addDate: "2024-03-17",
     isFavourite: false
-  }
+  },
+  ...generateRandomSeries(30)
 ];
+
+function generateRandomSeries(count: number) {
+  const genres = ["Crime", "Drama", "Thriller", "Sci-Fi", "Horror", "Mystery", "Fantasy", "Adventure", "Action", "Comedy", "Romance", "Dark Comedy", "Animation", "Anthology", "Biography", "Anime"];
+  const statuses : SeriesStatus[] = ["Watched" , "Currently Watching", "Watchlist"];
+
+  return Array.from({ length: count }, (_, i) => ({
+    id: i + 11,
+    title: `Series ${i + 11}`,
+    genre: [genres[Math.floor(Math.random() * genres.length)], genres[Math.floor(Math.random() * genres.length)]],
+    description: "A random description for the series.",
+    img: "/images/mockup.jpg",
+    totalSeasons: Math.floor(Math.random() * 10) + 1,
+    status: statuses[Math.floor(Math.random() * statuses.length)],
+    addDate: `2024-03-${Math.floor(Math.random() * 30) + 1}`,
+    isFavourite: false
+  }));
+}
