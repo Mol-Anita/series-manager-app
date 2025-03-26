@@ -1,6 +1,5 @@
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
-import { deleteSeriesById } from "@/api/series";
 
 const DeleteButton = ({ seriesId, onDelete }) => { 
   const handleClick = (close) => {

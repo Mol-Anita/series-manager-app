@@ -1,5 +1,6 @@
 import { series } from "./mockdata/series";
 import { SeriesStatus } from "@/types/seriesStatus";
+import { Genre } from "@/types/genre";
 
 export type SeriesFilters = {
   genres?: string[];
@@ -109,3 +110,62 @@ export const deleteSeriesById = async (id: number) => {
   }
   console.log(`Series with ID ${id} deleted successfully.`);
 };
+
+
+export const getGenreData = async () => {
+  const genreData: Record<Genre, number> = {
+    "Crime": 0,
+    "Drama": 0,
+    "Thriller": 0,
+    "Sci-Fi": 0,
+    "Horror": 0,
+    "Mystery": 0,
+    "Fantasy": 0,
+    "Adventure": 0,
+    "Action": 0,
+    "Comedy": 0,
+    "Romance": 0,
+    "Dark Comedy": 0,
+    "Animation": 0,
+    "Anthology": 0,
+    "Biography": 0,
+    "Anime": 0,
+  };
+
+  seriesList.forEach(series => {
+    series["genre"].forEach(genre => {
+      genreData[genre as Genre]++;
+    });
+  });
+
+  const formattedGenreData = Object.entries(genreData).map(([name, value]) => ({
+    value,
+    name,
+  }));
+
+  return formattedGenreData;
+}
+
+export const updateChartDataAsync = async (currentData: { name: string; value: number }[]): Promise<{ name: string; value: number }[]> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      if (currentData.length === 0) {
+        resolve(currentData); 
+        return;
+      }
+
+      const randomIndex = Math.floor(Math.random() * currentData.length);
+
+  
+      const updatedData = currentData.map((genre, index) =>
+        index === randomIndex
+          ? { ...genre, value: genre.value + 1 }
+          : genre
+      );
+
+      resolve(updatedData);
+    }, 500); 
+  });
+};
+
+export default updateChartDataAsync;

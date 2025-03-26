@@ -19,7 +19,7 @@ const NavBar = () => {
           {[
             { name: "Home", href: "/" },
             { name: "My Series", href: "/my-series" },
-            { name: "Watchlist", href: "/watchlist" },
+            { name: "Stats", href: "/stats" },
             { name: "Discover", href: "/discover" },
           ].map((link) => (
             <li key={link.href}>
