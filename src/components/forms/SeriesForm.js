@@ -110,7 +110,7 @@ const InputForms = ({ title, apiCall, defaultValues, isEditForm, id=undefined })
     <div className="flex flex-col p-14 bg-stone-900 rounded-2xl w-3xl h-fit">
       <h1 className=" font-bold text-3xl">{title}</h1>
       <div className="py-5">
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} role="form">
           <InputField
             type="text"
             label="Series Title"

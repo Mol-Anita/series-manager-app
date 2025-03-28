@@ -7,6 +7,7 @@ const StatusInput = ({ register, errors }) => {
             <input
               type="radio"
               value="Currently Watching"
+              label="Currently Watching"
               {...register}
               className="w-4 h-4 text-white text-sm/6 bg-transparent border-gray-300 focus:white focus:ring-2"
             />
@@ -17,6 +18,7 @@ const StatusInput = ({ register, errors }) => {
             <input
               type="radio"
               value="Watched"
+              label="Watched"
               {...register}
               className="w-4 h-4 text-white text-sm/6 bg-gray-100 border-gray-300 focus:white focus:ring-2"
             />
@@ -27,6 +29,7 @@ const StatusInput = ({ register, errors }) => {
             <input
               type="radio"
               value="Watchlist"
+              label="Watchlist"
               {...register}
               className="w-4 h-4 text-white text-sm/6 bg-gray-100 border-gray-300 focus:white focus:ring-2"
             />
