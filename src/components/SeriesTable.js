@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { getSeriesById } from "@/api/series";
+import { getSeriesById } from "../lib/api/apiCallingFunctions";
 
 const SeriesTable = ({ seriesId }) => {
   const [series, setSeries] = useState(null);

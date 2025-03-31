@@ -1,7 +1,8 @@
-import { series } from "./mockdata/series";
-import generateRandomSeries from "./mockdata/series"
+import { series } from "../../app/api/mockdata/series";
+import generateRandomSeries from "../../app/api/mockdata/series"
 import { SeriesStatus } from "@/types/seriesStatus";
 import { Genre } from "@/types/genre";
+
 
 export type SeriesFilters = {
   genres?: string[];
@@ -22,94 +23,65 @@ type SeriesData = {
 let seriesList = [...series];
 
 export const fetchSeries = async (options?: SeriesFilters) => {
-  let filteredSeries = [...seriesList];
+  const url = new URL("http://localhost:3000/api/series"); 
 
-  if (options?.genres && options?.genres.length != 0) {
-    filteredSeries = filteredSeries.filter((series) => {
-      return series.genre.some((genre) => options.genres!.includes(genre));
-    });
-  }
+  if (options?.genres && options.genres.length > 0) options.genres.forEach((genre) => url.searchParams.append("genres", genre));
+  if (options?.search) url.searchParams.set("search", options.search);
+  if (options?.seasonNumber) url.searchParams.set("seasonNumber", options.seasonNumber.toString());
+  if (options?.sortBySeasons) url.searchParams.set("sortBySeasons", options.sortBySeasons.toString());
 
-  if (options?.seasonNumber) {
-    filteredSeries = filteredSeries.filter((series) => {
-      return series.totalSeasons >= (options.seasonNumber as number);
-    });
-  }
-
-  if (options?.search && options.search.length > 0) {
-    filteredSeries = filteredSeries.filter((series) => {
-      return series.title.toLowerCase().includes(options.search!.toLowerCase());
-    });
-  }
-
-  if (options?.sortBySeasons) {
-    filteredSeries = filteredSeries.sort((a, b) => a.totalSeasons - b.totalSeasons);
-  }
-
-
-  return filteredSeries;
+  const response = await fetch(url.toString(), { cache: "no-store" });
+  const data = await response.json();
+  
+  return data.result;
 };
 
 export const getSeriesById = async (id: number) => {
-  return seriesList.find((series) => series.id === Number(id));
+  const response = await fetch(`http://localhost:3000/api/series/${id}`)
+  const seriesData = await response.json();
+
+  return seriesData.result;
 };
 
 export const saveSeries = async (data: SeriesData) => {
-  const newId = seriesList[seriesList.length - 1].id + 1;
-  const date = new Date();
-  const addDate = `${date.getMonth()}-${date.getFullYear()}-${date.getTime()}`;
+  const response = await fetch("/api/series", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
 
-  const newSeries = {
-    id: newId,
-    title: data.title,
-    genre: data.genre,
-    description: data.description,
-    img: data.image,
-    totalSeasons: data.totalSeasons,
-    status: data.status,
-    addDate: addDate,
-    isFavourite: false,
-  };
-  seriesList.push(newSeries);
+  if (!response.ok) {
+    throw new Error("Failed to save series");
+  }
+
+  return response.json();
 };
 
 export const updateSeriesById = async (id: number, data: SeriesData) => {
-  const index = seriesList.findIndex((series) => series.id === Number(id));
+  const response = await fetch(`/api/series/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
 
-  const editedSeries = seriesList[index];
-
-  if (editedSeries.title != data.title) {
-    editedSeries.title = data.title;
-  }
-
-  if (editedSeries.genre != data.genre) {
-    editedSeries.genre = data.genre;
-  }
-  if (editedSeries.description != data.description) {
-    editedSeries.description = data.description;
-  }
-  if (editedSeries.totalSeasons != data.totalSeasons) {
-    editedSeries.totalSeasons = data.totalSeasons;
-  }
-  if (editedSeries.status != data.status) {
-    editedSeries.status = data.status;
+  if (!response.ok) {
+    throw new Error("Failed to update series");
   }
 
-  if (data.image !== "") {
-    editedSeries.img = data.image;
-  }
-
-  seriesList[index] = editedSeries;
 };
 
 export const deleteSeriesById = async (id: number) => {
-  const index = seriesList.findIndex((series) => series.id === Number(id));
-  if (index !== -1) {
-    seriesList.splice(index, 1);
-  } else {
-    throw new Error("Error occurred at delete");
+  const response = await fetch(`/api/series/${id}`,{
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete series");
   }
-  console.log(`Series with ID ${id} deleted successfully.`);
 };
 
 

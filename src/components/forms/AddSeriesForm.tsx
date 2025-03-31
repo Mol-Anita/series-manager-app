@@ -1,7 +1,7 @@
 "use client";
 
 import SeriesForm from "./SeriesForm";
-import { saveSeries } from "@/api/series";
+import { saveSeries } from "@/lib/api/apiCallingFunctions";
 
 const AddSeriesForm = () => {
   const defaultValues = {

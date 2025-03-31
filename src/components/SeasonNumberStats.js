@@ -1,4 +1,4 @@
-import { classifySeriesLength } from "@/api/series";
+import { classifySeriesLength } from "@/lib/api/apiCallingFunctions";
 import {ShortSeriesSign, MediumSeriesSign, LongSeriesSign} from "./SeasonStatRectangles"
 
 const SeasonNumberStats = (seasons) => {

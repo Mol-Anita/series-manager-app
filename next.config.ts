@@ -5,3 +5,10 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+module.exports = {
+  experimental: {
+    appDir: true, // Ensure Next.js App Router works properly
+    disableMiddlewareWarning: true, // Prevent warnings
+  },
+};

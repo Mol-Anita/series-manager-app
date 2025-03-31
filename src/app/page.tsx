@@ -2,7 +2,7 @@
 
 import SeriesCardSection from "../components/SeriesCardSection";
 import { useQuery } from "@tanstack/react-query";
-import { fetchSeries } from "../api/series";
+import { fetchSeries } from "../lib/api/apiCallingFunctions";
 
 export default function Home() {
   const { data, isFetching } = useQuery({

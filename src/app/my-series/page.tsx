@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchSeries, SeriesFilters, deleteSeriesById } from "../../api/series";
+import { fetchSeries, SeriesFilters, deleteSeriesById } from "../../lib/api/apiCallingFunctions";
 import SeriesList from "../../components/SeriesList";
 import SeriesListFilters from "../../components/filter-and-sort/SeriesListFilters";
 import { useState, useEffect } from "react";
@@ -20,12 +20,11 @@ const MySeries = () => {
   const [seasonNumber, setSeasonNumber] = useState < SeriesFilters["seasonNumber"] >();
   const [sortBySeasons, setSortBySeasons] = useState <SeriesFilters["sortBySeasons"]>();
   const [itemsPerPage, setItemsPerPage] = useState<number>(14);
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   const { data, isFetching, refetch } = useQuery({
     queryKey: ['series', genres?.join(','), search, seasonNumber, sortBySeasons],
-    queryFn: () => fetchSeries({ genres, search, seasonNumber, sortBySeasons}),
-    staleTime: 0,
+    queryFn: () => fetchSeries({ genres, search, seasonNumber, sortBySeasons }),
   });
 
 
@@ -34,7 +33,6 @@ const MySeries = () => {
           setSeasonNumber(filters.seasonNumber);
           setSearch(filters.search);
           setSortBySeasons(filters.sortBySeasons);
-
     router.push("/my-series");
   }
 
@@ -43,8 +41,12 @@ const MySeries = () => {
   }
 
   const handleDelete = async (seriesId: number) => {
+    try {
     await deleteSeriesById(seriesId);
-    refetch(); 
+    queryClient.invalidateQueries({ queryKey: ['series', genres?.join(','), search, seasonNumber, sortBySeasons] });
+  } catch (error) {
+    console.error("Error deleting series:", error);
+  }
   };
 
   const searchParams = useSearchParams();

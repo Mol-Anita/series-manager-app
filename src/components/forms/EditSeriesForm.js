@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import SeriesForm from "./SeriesForm";
-import { updateSeriesById, getSeriesById } from "@/api/series";
+import { updateSeriesById, getSeriesById } from "../../lib/api/apiCallingFunctions";
 
 const EditSeriesForm = ({ seriesId }) => {
   const [selectedSeries, setSelectedSeries] = useState(null);
@@ -12,7 +12,6 @@ const EditSeriesForm = ({ seriesId }) => {
     
     const fetchSeries = async () => {
       const data = await getSeriesById(seriesId);
-      console.log("Fetched series:", data);
       setSelectedSeries(data);
     };
 

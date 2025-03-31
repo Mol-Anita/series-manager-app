@@ -1,4 +1,4 @@
-import { SeriesFilters } from "@/api/series";
+import { SeriesFilters } from "@/lib/api/apiCallingFunctions";
 import { useDebounce } from "@/hooks/useDebounce";
 import { SetStateAction, useEffect, useState } from "react";
 
