@@ -6,6 +6,7 @@ import { getGenreData } from "../../api/series";
 
 const Stats = () => {
   const [data, setData] = useState([]);
+  
 
   useEffect(() => {
     const fetchData = async () => {

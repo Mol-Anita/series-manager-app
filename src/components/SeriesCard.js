@@ -1,8 +1,8 @@
-"use client";
-import { useState } from "react";
+
 import Image from "next/image";
 import Link from "next/link";
 import DeleteButton from "./DeleteButton";
+import SeasonNumberStats from "./SeasonNumberStats"
 
 const SeriesCard = ({ isOnMaster, id, image, title, genres, seasons, onDelete}) => {
   
@@ -33,7 +33,10 @@ const SeriesCard = ({ isOnMaster, id, image, title, genres, seasons, onDelete}) 
       <div className="pt-2 text-left">
         <h1 className="font-bold">{title}</h1>
         <h2 className="font-light text-sm pb-3">{genres.join(', ')}</h2>
+        <div className="flex flex-row justify-between">
         <h3 className="font-normal text-sm text-neutral-400">{seasons > 1 ? `${seasons} Seasons` : `${seasons} Season`}</h3>
+        <SeasonNumberStats seasons={seasons} />
+        </div>
       </div>
     </div>
   );

@@ -4,9 +4,11 @@ import "@testing-library/jest-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import SeriesListFilters from "../components/filter-and-sort/SeriesListFilters";
 import { fetchSeries } from "../api/series";
-
+import { MediumSeriesSign } from "../components/SeasonStatRectangles";
+import SeasonNumberStats from "../components/SeasonNumberStats";
 jest.mock("../api/series", () => ({
   fetchSeries: jest.fn(),
+  classifySeriesLength: jest.fn()
 }));
 
 const mockSeries = [
@@ -84,6 +86,11 @@ describe("Filter and Sort Functionality", () => {
       expect(result[0].title).toBe("Breaking Bad");
     });
 
+    it("filters no matching genres correctly", async () => {
+      const result = await fetchSeries({ genres: ["Anime"] });
+      expect(result).toHaveLength(0);
+    });
+
     it("filters by minimum seasons correctly", async () => {
       const result = await fetchSeries({ seasonNumber: 6 });
       expect(result).toHaveLength(1);
@@ -106,5 +113,22 @@ describe("Filter and Sort Functionality", () => {
       const result = await fetchSeries();
       expect(result.length).toBe(mockSeries.length);
     });
+
+    describe("verifies series", () => {
+      it("renders series list correctly", async () => {
+        fetchSeries.mockResolvedValue(mockSeries);
+  
+        render(
+          <QueryClientProvider client={queryClient}>
+            <SeasonNumberStats seasons={5} />
+          </QueryClientProvider>
+        );
+  
+        await waitFor(() => {
+          expect(screen.findByTestId("medium")).toBeInTheDocument();
+        });
+      });
+    });
+
   });
 });

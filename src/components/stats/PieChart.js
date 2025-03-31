@@ -6,28 +6,36 @@ import { updateChartDataAsync } from "@/api/series";
 
 const RealTimeChart = ({ statData }) => {
   const [data, setData] = useState(statData || []);
+  const [isUpdating, setIsUpdating] = useState(true); 
+
+  const handleUpdate = async () => {
+    const newData = await updateChartDataAsync(data);
+    setData(newData);
+  };
 
   useEffect(() => {
     let isMounted = true;
+    let interval = null;
 
     const updateChart = async () => {
-      const newData = await updateChartDataAsync(data);
-      if (isMounted) {
-        setData(newData);
-      }
+      if (!isUpdating) return; 
+      await handleUpdate(); 
     };
 
-    updateChart();
-
-    const interval = setInterval(() => {
-      updateChart();
-    }, 3000); 
+    if (isUpdating) {
+      updateChart(); 
+      interval = setInterval(updateChart, 3000);
+    }
 
     return () => {
       isMounted = false;
-      clearInterval(interval);
+      if (interval) clearInterval(interval);
     };
-  }, [data]); 
+  }, [isUpdating, data]);
+
+  const toggleUpdate = () => {
+    setIsUpdating((prev) => !prev); 
+  };
 
   const option = {
     backgroundColor: "#1e1e1e",
@@ -35,10 +43,10 @@ const RealTimeChart = ({ statData }) => {
       text: "Real-time Genre Distribution",
       left: "center",
       textStyle: {
-        color: "#ffffff", 
+        color: "#ffffff",
         fontSize: 18,
         fontWeight: "bold",
-      }
+      },
     },
     tooltip: {
       trigger: "item",
@@ -67,14 +75,33 @@ const RealTimeChart = ({ statData }) => {
           },
         },
         label: {
-          color: "#ffffff", 
+          color: "#ffffff",
           fontSize: 14,
         },
       },
     ],
   };
 
-  return <ReactECharts option={option} style={{height: "600px", width: "1000px"}}/>;
+  return (
+    <div>
+      <button
+        onClick={toggleUpdate}
+        style={{
+          marginBottom: "10px",
+          padding: "8px 15px",
+          backgroundColor: isUpdating ? "#ff4d4d" : "#4caf50",
+          color: "#ffffff",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        {isUpdating ? "Stop Updates" : "Start Updates"}
+      </button>
+
+      <ReactECharts option={option} style={{ height: "600px", width: "1000px" }} />
+    </div>
+  );
 };
 
 export default RealTimeChart;

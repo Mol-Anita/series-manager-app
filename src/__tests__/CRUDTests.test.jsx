@@ -6,8 +6,9 @@ import MySeries from "../app/my-series/page";
 import AddSeriesForm from "../components/forms/AddSeriesForm";
 import EditSeriesForm from "../components/forms/EditSeriesForm";
 import SeriesCard from "../components/SeriesCard";
-import { saveSeries, updateSeriesById, deleteSeriesById, fetchSeries, getSeriesById } from "../api/series";
+import { saveSeries, updateSeriesById, deleteSeriesById, fetchSeries, getSeriesById, classifySeriesLength } from "../api/series";
 import userEvent from '@testing-library/user-event';
+import SeasonNumberStats from "../components/SeasonNumberStats";
 
 jest.mock("../api/series", () => ({
   saveSeries: jest.fn(),
@@ -15,6 +16,7 @@ jest.mock("../api/series", () => ({
   deleteSeriesById: jest.fn(),
   fetchSeries: jest.fn(),
   getSeriesById: jest.fn(),
+  classifySeriesLength: jest.fn()
 }));
 
 jest.mock("next/navigation", () => ({

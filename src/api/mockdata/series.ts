@@ -115,7 +115,7 @@ export const series: Series[] = [
   ...generateRandomSeries(30)
 ];
 
-function generateRandomSeries(count: number) {
+export default function generateRandomSeries(count: number) {
   const genres = ["Crime", "Drama", "Thriller", "Sci-Fi", "Horror", "Mystery", "Fantasy", "Adventure", "Action", "Comedy", "Romance", "Dark Comedy", "Animation", "Anthology", "Biography", "Anime"];
   const statuses : SeriesStatus[] = ["Watched" , "Currently Watching", "Watchlist"];
 

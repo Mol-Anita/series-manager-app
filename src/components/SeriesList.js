@@ -4,6 +4,7 @@ import SeriesCard from "./SeriesCard";
 import AddCard from "./AddCard";
 import { Series } from "@/types/series";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const SeriesList = ({ seriesList, onDelete, pageNumber }) => {
   const router = useRouter();
@@ -11,6 +12,7 @@ const SeriesList = ({ seriesList, onDelete, pageNumber }) => {
   const handleAddButtonClick = () => {
     router.push("/add-series");
   };
+
 
   return (
     <section className="bg-neutral-950 p-4 my-5">

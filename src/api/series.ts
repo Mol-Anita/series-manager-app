@@ -1,4 +1,5 @@
 import { series } from "./mockdata/series";
+import generateRandomSeries from "./mockdata/series"
 import { SeriesStatus } from "@/types/seriesStatus";
 import { Genre } from "@/types/genre";
 
@@ -146,26 +147,53 @@ export const getGenreData = async () => {
   return formattedGenreData;
 }
 
-export const updateChartDataAsync = async (currentData: { name: string; value: number }[]): Promise<{ name: string; value: number }[]> => {
+export const updateChartDataAsync = async (
+  currentData: { name: string; value: number }[]
+): Promise<{ name: string; value: number }[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       if (currentData.length === 0) {
-        resolve(currentData); 
+        resolve(currentData);
         return;
       }
 
-      const randomIndex = Math.floor(Math.random() * currentData.length);
+      const newSeries = generateRandomSeries(1)[0];
+      seriesList.push(newSeries);
+      const newGenre = newSeries.genre[0];
+      const existingGenreIndex = currentData.findIndex((item) => item.name === newGenre);
 
-  
-      const updatedData = currentData.map((genre, index) =>
-        index === randomIndex
-          ? { ...genre, value: genre.value + 1 }
-          : genre
-      );
+      let updatedData;
+      if (existingGenreIndex !== -1) {
+        updatedData = currentData.map((item, index) =>
+          index === existingGenreIndex ? { ...item, value: item.value + 1 } : item
+        );
+      } else {
+        updatedData = [...currentData, { name: newGenre, value: 1 }];
+      }
+
 
       resolve(updatedData);
-    }, 500); 
+    }, 500);
   });
 };
 
-export default updateChartDataAsync;
+
+
+export const classifySeriesLength = (series: { seasons: number }): number => {
+  if (!seriesList || seriesList.length === 0) return 1; 
+
+  const totalSeasons = seriesList.reduce((sum, s) => sum + s.totalSeasons, 0);
+  const avgLength = Math.round(totalSeasons / seriesList.length);
+
+  const seasonCount = series.seasons;
+
+  console.log("Seasons:", seasonCount, "Avg Length:", avgLength);
+
+
+  const mediumRange = avgLength * 0.33; 
+
+  if (seasonCount < avgLength - mediumRange) return 1; 
+  if (seasonCount > avgLength + mediumRange) return 3; 
+
+  return 2; 
+};
