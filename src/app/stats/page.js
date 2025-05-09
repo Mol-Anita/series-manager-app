@@ -2,24 +2,50 @@
 
 import { useEffect, useState } from "react";
 import GenreChart from "../../components/stats/GenreChart";
-import { getGenreData } from "../../api/series";
+import { websocketService } from "@/lib/services/websocketService";
 
 const Stats = () => {
   const [data, setData] = useState([]);
-  
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const initializeWebSocket = async () => {
       try {
-        const genreData = await getGenreData();
-        setData(genreData);
-      } catch (error) {
-        console.error("Error fetching genre data:", error);
+        setError(null);
+        await websocketService.connect();
+        websocketService.onEntitiesReceived((entities) => {
+          setData(entities);
+        });
+        await websocketService.getAllEntities();
+      } catch (err) {
+        setError('Failed to connect to the server. Please make sure the backend is running.');
+        console.error('Connection error:', err);
       }
     };
 
-    fetchData();
+    initializeWebSocket();
+
+    return () => {
+      websocketService.disconnect();
+    };
   }, []);
+
+  if (error) {
+    return (
+      <div
+        style={{
+          padding: "16px",
+          backgroundColor: "#ff4d4d20",
+          border: "1px solid #ff4d4d",
+          borderRadius: "8px",
+          color: "#ff4d4d",
+          margin: "16px",
+        }}
+      >
+        {error}
+      </div>
+    );
+  }
 
   return (
     <div>

@@ -2,39 +2,57 @@
 
 import React, { useEffect, useState } from "react";
 import ReactECharts from "echarts-for-react";
-import { updateChartDataAsync } from "@/api/series";
+import { websocketService } from "@/lib/services/websocketService";
 
 const RealTimeChart = ({ statData }) => {
   const [data, setData] = useState(statData || []);
-  const [isUpdating, setIsUpdating] = useState(true); 
-
-  const handleUpdate = async () => {
-    const newData = await updateChartDataAsync(data);
-    setData(newData);
-  };
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState('Disconnected');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    let isMounted = true;
-    let interval = null;
-
-    const updateChart = async () => {
-      if (!isUpdating) return; 
-      await handleUpdate(); 
+    const connectWebSocket = async () => {
+      try {
+        setError(null);
+        await websocketService.connect();
+        websocketService.onEntitiesReceived((entities) => {
+          setData(entities);
+        });
+        setConnectionStatus(websocketService.getConnectionState());
+      } catch (err) {
+        setError('Failed to connect to the server. Please make sure the backend is running.');
+        console.error('Connection error:', err);
+      }
     };
 
-    if (isUpdating) {
-      updateChart(); 
-      interval = setInterval(updateChart, 3000);
-    }
+    connectWebSocket();
+
+    // Check connection status periodically
+    const statusInterval = setInterval(() => {
+      setConnectionStatus(websocketService.getConnectionState());
+    }, 1000);
 
     return () => {
-      isMounted = false;
-      if (interval) clearInterval(interval);
+      clearInterval(statusInterval);
+      websocketService.disconnect();
     };
-  }, [isUpdating, data]);
+  }, []);
 
-  const toggleUpdate = () => {
-    setIsUpdating((prev) => !prev); 
+  const toggleUpdate = async () => {
+    try {
+      setError(null);
+      setIsUpdating((prev) => {
+        if (!prev) {
+          websocketService.startGeneration();
+        } else {
+          websocketService.stopGeneration();
+        }
+        return !prev;
+      });
+    } catch (err) {
+      setError('Failed to toggle updates. Please check your connection.');
+      console.error('Toggle error:', err);
+    }
   };
 
   const option = {
@@ -84,20 +102,51 @@ const RealTimeChart = ({ statData }) => {
 
   return (
     <div>
-      <button
-        onClick={toggleUpdate}
-        style={{
-          marginBottom: "10px",
-          padding: "8px 15px",
-          backgroundColor: isUpdating ? "#ff4d4d" : "#4caf50",
-          color: "#ffffff",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-        }}
-      >
-        {isUpdating ? "Stop Updates" : "Start Updates"}
-      </button>
+      <div className="flex flex-col items-center mb-4">
+        <div className="flex items-center gap-4 mb-2">
+          <button
+            onClick={toggleUpdate}
+            disabled={connectionStatus !== 'Connected'}
+            style={{
+              padding: "8px 15px",
+              backgroundColor: isUpdating ? "#ff4d4d" : "#4caf50",
+              color: "#ffffff",
+              border: "none",
+              borderRadius: "5px",
+              cursor: connectionStatus === 'Connected' ? "pointer" : "not-allowed",
+              opacity: connectionStatus === 'Connected' ? 1 : 0.6,
+            }}
+          >
+            {isUpdating ? "Stop Updates" : "Start Updates"}
+          </button>
+          <span
+            style={{
+              padding: "4px 8px",
+              borderRadius: "4px",
+              backgroundColor: connectionStatus === 'Connected' ? "#4caf50" : "#ff4d4d",
+              color: "#ffffff",
+              fontSize: "0.875rem",
+            }}
+          >
+            {connectionStatus}
+          </span>
+        </div>
+        {error && (
+          <div
+            style={{
+              padding: "8px 12px",
+              backgroundColor: "#ff4d4d20",
+              border: "1px solid #ff4d4d",
+              borderRadius: "4px",
+              color: "#ff4d4d",
+              fontSize: "0.875rem",
+              marginBottom: "8px",
+            }}
+          >
+            {error}
+          </div>
+        )}
+      </div>
 
       <ReactECharts option={option} style={{ height: "600px", width: "1000px" }} />
     </div>
