@@ -13,7 +13,6 @@ const SeriesList = ({ seriesList, onDelete, pageNumber }) => {
     router.push("/add-series");
   };
 
-
   return (
     <section className="bg-neutral-950 p-4 my-5">
       <div className="p-4">
@@ -23,15 +22,11 @@ const SeriesList = ({ seriesList, onDelete, pageNumber }) => {
           </li>}
           {seriesList.map((series) => {
             return (
-              <li key={series.id} className="flex-none m-2">
+              <li key={series.Id} className="flex-none m-2">
                 <SeriesCard
-                  id={series.id}
-                  isOnMaster={false}
-                  title={series.title}
-                  image={series.img}
-                  genres={series.genre}
-                  seasons={series.totalSeasons}
+                  series={series}
                   onDelete={onDelete}
+                  isOnMaster={false}
                 />
               </li>
             );

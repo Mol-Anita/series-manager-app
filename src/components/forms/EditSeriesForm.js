@@ -23,12 +23,13 @@ const EditSeriesForm = ({ seriesId }) => {
   }
 
   const defaultValues = {
-    title: selectedSeries.title,
-    genre: selectedSeries.genre.join(", "),
-    description: selectedSeries.description,
+    id: seriesId,
+    title: selectedSeries.Title,
+    genre: selectedSeries.Genres.join(", "),
+    description: selectedSeries.Description,
     image: "",
-    totalSeasons: selectedSeries.totalSeasons,
-    status: selectedSeries.status,
+    totalSeasons: selectedSeries.TotalSeasons,
+    status: selectedSeries.Status,
   };
 
   return (

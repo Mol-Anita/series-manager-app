@@ -1,8 +1,5 @@
-import { series } from "../../app/api/mockdata/series";
-import generateRandomSeries from "../../app/api/mockdata/series"
+import { Series, Genre } from "@/types/series";
 import { SeriesStatus } from "@/types/seriesStatus";
-import { Genre } from "@/types/genre";
-
 
 export type SeriesFilters = {
   genres?: string[];
@@ -12,55 +9,109 @@ export type SeriesFilters = {
 };
 
 type SeriesData = {
-  title: string;
-  image: string;
-  genre: string[];
-  description: string;
-  totalSeasons: number;
-  status: SeriesStatus;
+  Id: number;
+  Title: string;
+  Description: string;
+  ImagePath: string;
+  TotalSeasons: number;
+  Genres: string[];
+  Status: string;
 };
 
-let seriesList = [...series];
+const API_BASE_URL = "http://localhost:5001/api";
 
 export const fetchSeries = async (options?: SeriesFilters) => {
-  const url = new URL("http://localhost:3000/api/series"); 
+  try {
+    const url = new URL(`${API_BASE_URL}/series`); 
 
-  if (options?.genres && options.genres.length > 0) options.genres.forEach((genre) => url.searchParams.append("genres", genre));
-  if (options?.search) url.searchParams.set("search", options.search);
-  if (options?.seasonNumber) url.searchParams.set("seasonNumber", options.seasonNumber.toString());
-  if (options?.sortBySeasons) url.searchParams.set("sortBySeasons", options.sortBySeasons.toString());
+    if (options?.genres && options.genres.length > 0) options.genres.forEach((genre) => url.searchParams.append("genres", genre));
+    if (options?.search) url.searchParams.set("search", options.search);
+    if (options?.seasonNumber) url.searchParams.set("seasonNumber", options.seasonNumber.toString());
+    if (options?.sortBySeasons) url.searchParams.set("sortBySeasons", options.sortBySeasons.toString());
 
-  const response = await fetch(url.toString(), { cache: "no-store" });
-  const data = await response.json();
-  
-  return data.result;
+    console.log('Fetching from URL:', url.toString());
+    
+    const response = await fetch(url.toString(), { 
+      cache: "no-store",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      mode: 'cors',
+    });
+    
+    console.log('Response status:', response.status);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Error response:', errorText);
+      throw new Error(`Failed to fetch series: ${response.statusText}. Details: ${errorText}`);
+    }
+    
+    const data = await response.json();
+    console.log('API Response:', data);
+    
+    if (!data.Result) {
+      console.warn('No Result field in response:', data);
+      return [];
+    }
+    
+    console.log('Returning series data:', data.Result);
+    return data.Result || [];
+  } catch (error) {
+    console.error('Error fetching series:', error);
+    if (error instanceof Error) {
+      console.error('Error details:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    throw error;
+  }
 };
 
 export const getSeriesById = async (id: number) => {
-  const response = await fetch(`http://localhost:3000/api/series/${id}`)
+  const response = await fetch(`${API_BASE_URL}/series/${id}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch series: ${response.statusText}`);
+  }
   const seriesData = await response.json();
 
-  return seriesData.result;
+  return seriesData.Result;
 };
 
 export const saveSeries = async (data: SeriesData) => {
-  const response = await fetch("/api/series", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
+  try {
+    console.log('Sending data to server:', data);
+    
+    const response = await fetch(`${API_BASE_URL}/series`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
-  if (!response.ok) {
-    throw new Error("Failed to save series");
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Server error response:', errorText);
+      throw new Error(`Failed to save series: ${response.statusText}. Details: ${errorText}`);
+    }
+
+    const responseData = await response.json();
+    console.log('Server response:', responseData);
+    return responseData;
+  } catch (error) {
+    console.error('Error in saveSeries:', error);
+    if (error instanceof Error) {
+      console.error('Error details:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    throw error;
   }
-
-  return response.json();
 };
 
 export const updateSeriesById = async (id: number, data: SeriesData) => {
-  const response = await fetch(`/api/series/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/series/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -69,24 +120,26 @@ export const updateSeriesById = async (id: number, data: SeriesData) => {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to update series");
+    throw new Error(`Failed to update series: ${response.statusText}`);
   }
 
+  return response.json();
 };
 
 export const deleteSeriesById = async (id: number) => {
-  const response = await fetch(`/api/series/${id}`,{
+  const response = await fetch(`${API_BASE_URL}/series/${id}`,{
     method: "DELETE",
   });
 
   if (!response.ok) {
-    throw new Error("Failed to delete series");
+    throw new Error(`Failed to delete series: ${response.statusText}`);
   }
+
+  return response.json();
 };
 
-
 export const getGenreData = async () => {
-  const genreData: Record<Genre, number> = {
+  const genreData: Record<string, number> = {
     "Crime": 0,
     "Drama": 0,
     "Thriller": 0,
@@ -105,9 +158,10 @@ export const getGenreData = async () => {
     "Anime": 0,
   };
 
-  seriesList.forEach(series => {
-    series["genre"].forEach(genre => {
-      genreData[genre as Genre]++;
+  const series = await fetchSeries();
+  series.forEach((series: Series) => {
+    series.Genres.forEach((genre: string) => {
+      genreData[genre]++;
     });
   });
 
@@ -117,55 +171,58 @@ export const getGenreData = async () => {
   }));
 
   return formattedGenreData;
-}
+};
 
 export const updateChartDataAsync = async (
   currentData: { name: string; value: number }[]
 ): Promise<{ name: string; value: number }[]> => {
   return new Promise((resolve) => {
-    setTimeout(() => {
+    setTimeout(async () => {
       if (currentData.length === 0) {
         resolve(currentData);
         return;
       }
 
-      const newSeries = generateRandomSeries(1)[0];
-      seriesList.push(newSeries);
-      const newGenre = newSeries.genre[0];
-      const existingGenreIndex = currentData.findIndex((item) => item.name === newGenre);
-
-      let updatedData;
-      if (existingGenreIndex !== -1) {
-        updatedData = currentData.map((item, index) =>
-          index === existingGenreIndex ? { ...item, value: item.value + 1 } : item
-        );
-      } else {
-        updatedData = [...currentData, { name: newGenre, value: 1 }];
+      const series = await fetchSeries();
+      if (series.length === 0) {
+        resolve(currentData);
+        return;
       }
 
+      const randomIndex = Math.floor(Math.random() * series.length);
+      const randomSeries = series[randomIndex];
+      
+      if (randomSeries.genres.length > 0) {
+        const newGenre = randomSeries.genres[0].name;
+        const existingGenreIndex = currentData.findIndex((item) => item.name === newGenre);
 
-      resolve(updatedData);
+        let updatedData;
+        if (existingGenreIndex !== -1) {
+          updatedData = currentData.map((item, index) =>
+            index === existingGenreIndex ? { ...item, value: item.value + 1 } : item
+          );
+        } else {
+          updatedData = [...currentData, { name: newGenre, value: 1 }];
+        }
+
+        resolve(updatedData);
+      } else {
+        resolve(currentData);
+      }
     }, 500);
   });
 };
 
+export const classifySeriesLength = (series: { totalSeasons: number }): number => {
+  if (!series || !series.totalSeasons) return 1;
 
+  const totalSeasons = series.totalSeasons;
+  const avgLength = 5; // Default average length
 
-export const classifySeriesLength = (series: { seasons: number }): number => {
-  if (!seriesList || seriesList.length === 0) return 1; 
+  const mediumRange = avgLength * 0.33;
 
-  const totalSeasons = seriesList.reduce((sum, s) => sum + s.totalSeasons, 0);
-  const avgLength = Math.round(totalSeasons / seriesList.length);
+  if (totalSeasons < avgLength - mediumRange) return 1;
+  if (totalSeasons > avgLength + mediumRange) return 3;
 
-  const seasonCount = series.seasons;
-
-  console.log("Seasons:", seasonCount, "Avg Length:", avgLength);
-
-
-  const mediumRange = avgLength * 0.33; 
-
-  if (seasonCount < avgLength - mediumRange) return 1; 
-  if (seasonCount > avgLength + mediumRange) return 3; 
-
-  return 2; 
+  return 2;
 };

@@ -6,9 +6,12 @@ import SubmitButton from "./SubmitButton";
 import ImageInput from "./ImageInput";
 import StatusInput from "./StatusInput";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const InputForms = ({ title, apiCall, defaultValues, isEditForm, id=undefined }) => {
   const router = useRouter();
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     register,
@@ -17,42 +20,40 @@ const InputForms = ({ title, apiCall, defaultValues, isEditForm, id=undefined })
   } = useForm({defaultValues,
   });
 
-  const convertToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-  };
-
   const onSubmit = async (data) => {
     try {
-      let imageBase64 = "";
-
-      if (data.image && data.image[0]) {
-        imageBase64 = await convertToBase64(data.image[0]);
-      }
+      console.log(data.Id);
+      setIsSubmitting(true);
+      setError("");
 
       const formattedData = {
-        title: data.title,
-        genre: data.genre.split(",").map((g) => g.trim()),
-        description: data.description,
-        totalSeasons: parseInt(data.totalSeasons, 10),
-        status: data.status,
-        image: imageBase64,
+        Id: parseInt(id, 10) || 0,
+        Title: data.title,
+        Description: data.description,
+        TotalSeasons: parseInt(data.totalSeasons, 10),
+        ImagePath: data.image || "/images/mockup.jpg", // Use the URL directly or default image
+        Genres: data.genre.split(",").map((g) => g.trim()),
+        Status: data.status
       };
 
-      console.log("Submitting Data:", formattedData);
+      console.log("Form data before submission:", data);
+      console.log("Formatted data for API:", formattedData);
+      console.log(formattedData.Id);
 
-      if (id) {
-        await apiCall(id, formattedData); 
-      } else {
+      if(isEditForm){
+        await apiCall(id, formattedData);
+      }
+      else{
         await apiCall(formattedData);
       }
+      
+
       router.push("/my-series");
     } catch (error) {
       console.error("Form submission error:", error);
+      setError(error.message || "An error occurred while saving the series");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -98,18 +99,22 @@ const InputForms = ({ title, apiCall, defaultValues, isEditForm, id=undefined })
     return true;
   };
 
-  const imageConstraints = isEditForm ? {} : {
-    required: "Cover image is required",
+  const imageConstraints = {
     pattern: {
-      value: /\.(jpg|jpeg|png|gif|webp)$/i,
-      message: "Invalid image format",
+      value: /(^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$)|""/i,
+      message: "Please enter a valid image URL (jpg, jpeg, png, gif, webp)",
     }
-  } ;
+  };
 
   return (
     <div className="flex flex-col p-14 bg-stone-900 rounded-2xl w-3xl h-fit">
       <h1 className=" font-bold text-3xl">{title}</h1>
       <div className="py-5">
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
         <form onSubmit={handleSubmit(onSubmit)} role="form">
           <InputField
             type="text"
@@ -143,7 +148,7 @@ const InputForms = ({ title, apiCall, defaultValues, isEditForm, id=undefined })
             errors={errors}
           />
           <ImageInput
-            label="Cover image"
+            label="Cover image URL"
             id="image"
             inputProps={register("image", imageConstraints)}
             errors={errors}
@@ -169,11 +174,12 @@ const InputForms = ({ title, apiCall, defaultValues, isEditForm, id=undefined })
             })}
           />
           <div className="flex justify-center">
-            <SubmitButton text={title} />
+            <SubmitButton isSubmitting={isSubmitting} text={title} />
           </div>
         </form>
       </div>
     </div>
   );
 };
+
 export default InputForms;

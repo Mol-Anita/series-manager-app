@@ -4,7 +4,7 @@
 const AddCard = ({onClick}) => {
   
   return (
-    <button onClick={onClick} className="bg-neutral-900 text-white rounded-2xl flex flex-col justify-center p-5 w-[310px] h-[460px] hover:cursor-pointer">
+    <button onClick={onClick} className="bg-neutral-900 text-white rounded-2xl flex flex-col justify-center p-5 w-[310px] h-[500px] hover:cursor-pointer">
       <div className="flex justify-center py-4">
         <svg
           xmlns="http://www.w3.org/2000/svg"

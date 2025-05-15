@@ -9,7 +9,15 @@ type SeriesCardSectionProps = {
 };
 
 const SeriesCardSection = ({ heading, seriesList }: SeriesCardSectionProps) => {
+  console.log('SeriesCardSection - Received seriesList:', seriesList);
+  
+  if (!seriesList || seriesList.length === 0) {
+    console.log('SeriesCardSection - No series data available');
+    return null;
+  }
+
   const series = seriesList.slice(0, 4);
+  console.log('SeriesCardSection - Sliced series:', series);
 
   return (
     <section className="bg-neutral-950 p-4 my-5">
@@ -19,17 +27,14 @@ const SeriesCardSection = ({ heading, seriesList }: SeriesCardSectionProps) => {
         </h2>
 
         <ul className="flex flex-row justify-between px-6">
-          {series.map((series) => {
+          {series.map((seriesItem) => {
+            console.log('SeriesCardSection - Rendering series:', seriesItem);
             return (
-              <li key={series.id} className="flex-none">
+              <li key={`series-${seriesItem.Id}`} className="flex-none">
                 <SeriesCard
-                  id={series.id}
-                  isOnMaster={true}
-                  title={series.title}
-                  image={series.img}
-                  genres={series.genre}
-                  seasons={series.totalSeasons}
+                  series={seriesItem}
                   onDelete={undefined}
+                  isOnMaster={true}
                 />
               </li>
             );

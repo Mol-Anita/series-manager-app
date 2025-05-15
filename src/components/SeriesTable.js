@@ -46,22 +46,22 @@ const SeriesTable = ({ seriesId }) => {
         </thead>
         <tbody>
           {series && (
-            <tr key={series.id} className="border-b border-neutral-700">
+            <tr key={series.Id} className="border-b border-neutral-700">
               <td className="p-3">
                 <div className="flex justify-center">
                   <Image
-                    src={series.img}
-                    alt={series.title}
+                    src={series.ImagePath}
+                    alt={series.Title}
                     width={100}
                     height={150}
                     className="object-cover rounded-lg"
                   />
                 </div>
               </td>
-              <td className="p-3">{series.title}</td>
-              <td className="p-3">{series.genre.join(", ")}</td>
-              <td className="p-3">{series.totalSeasons}</td>
-              <td className="p-3">{series.description}</td>
+              <td className="p-3">{series.Title}</td>
+              <td className="p-3">{series.Genres.join(", ")}</td>
+              <td className="p-3">{series.TotalSeasons}</td>
+              <td className="p-3">{series.Description}</td>
             </tr>
           )}
         </tbody>

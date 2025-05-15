@@ -1,13 +1,23 @@
-import { SeriesStatus } from "./seriesStatus";
+
+export type Genre = {
+  id: number;
+  name: string;
+};
+
+export type SeriesStatus = {
+  id: number;
+  name: string;
+};
 
 export type Series = {
-    id: number;
-    title: string;
-    img: string;
-    genre: string[];
-    description: string;
-    totalSeasons: number;
-    status: SeriesStatus;
-    addDate: string;
-    isFavourite: boolean;
+  Id: number;
+  Title: string;
+  Description: string;
+  ImagePath: string;
+  TotalSeasons: number;
+  AddDate: string;
+  IsFavourite: boolean;
+  StatusId: number;
+  Genres: string[];
+  Status: string;
 };
