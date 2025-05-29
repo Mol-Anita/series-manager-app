@@ -1,47 +1,27 @@
 import type { Metadata } from "next";
-import { Inter, Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from "../components/Header";
-import QueryProvider from "../components/QueryProvider"; // Import new QueryProvider
-import { AuthProvider } from "../context/AuthContext";
+import Layout from "@/components/Layout";
+import Providers from "@/components/Providers";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Series Manager App",
-  description: "Track your favourite TV Series.",
+  title: "Series Manager",
+  description: "Manage your favorite TV series",
 };
 
-export default function Layout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="antialiased bg-black">
-        <AuthProvider>
-          <QueryProvider>
-            <Header />
-            {children}
-          </QueryProvider>
-        </AuthProvider>
+    <html lang="en">
+      <body className={inter.className}>
+        <Providers>
+          <Layout>{children}</Layout>
+        </Providers>
       </body>
     </html>
   );

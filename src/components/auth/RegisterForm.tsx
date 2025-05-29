@@ -51,6 +51,20 @@ const RegisterForm = () => {
             errors={errors}
           />
           <InputField
+            type="email"
+            label="Email"
+            id="email"
+            placeholder="Enter your email"
+            inputProps={register("Email", { 
+              required: "Email is required",
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "Invalid email address"
+              }
+            })}
+            errors={errors}
+          />
+          <InputField
             type="password"
             label="Password"
             id="password"

@@ -5,12 +5,14 @@ import InputField from "../forms/InputField";
 import SubmitButton from "./SubmitButton";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { loginUser } from "../../lib/services/authService"; // Adjust path
+import { loginUser } from "@/lib/services/authService";
 import { AuthFormData } from "@/types/AuthFormTypes";
+import { useAuth } from "@/contexts/AuthContext";
 
 const LoginForm = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<AuthFormData>();
   const router = useRouter();
+  const { updateAuthState } = useAuth();
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -18,9 +20,14 @@ const LoginForm = () => {
     setIsSubmitting(true);
     setError("");
     try {
-      const result = await loginUser(data);
-      localStorage.setItem("token", result.token);
-      router.push("/my-series");
+      // Only send email and password to the backend
+      const loginData = {
+        Email: data.Email,
+        Password: data.Password
+      };
+      const result = await loginUser(loginData);
+      updateAuthState(true, result.username);
+      router.push("/");
     } catch (err) {
       setError(
         typeof err === "object" && err !== null && "message" in err
@@ -43,11 +50,17 @@ const LoginForm = () => {
         )}
         <form onSubmit={handleSubmit(onSubmit)}>
           <InputField
-            type="text"
-            label="Username"
-            id="username"
-            placeholder="Enter username"
-            inputProps={register("Username", { required: "Username is required" })}
+            type="email"
+            label="Email"
+            id="email"
+            placeholder="Enter your email"
+            inputProps={register("Email", { 
+              required: "Email is required",
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "Invalid email address"
+              }
+            })}
             errors={errors}
           />
           <InputField
