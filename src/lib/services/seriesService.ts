@@ -55,7 +55,7 @@ export const fetchSeries = async (
         Accept: "application/json",
       },
       mode: "cors",
-      credentials: "same-origin", // or 'include' if using auth/cookies
+      credentials: "include",
     });
 
     const metaRaw = response.headers.get("X-Pagination");
@@ -90,7 +90,7 @@ export const getSeriesById = async (id: number): Promise<Series> => {
   const response = await fetch(`${BASE_URL}/api/series/${id}`, {
     headers: { Accept: "application/json" },
     mode: "cors",
-    credentials: "same-origin",
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -111,7 +111,7 @@ export const saveSeries = async (data: SeriesData) => {
     },
     body: JSON.stringify(data),
     mode: "cors",
-    credentials: "same-origin",
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -131,7 +131,7 @@ export const updateSeriesById = async (id: number, data: SeriesData) => {
     },
     body: JSON.stringify(data),
     mode: "cors",
-    credentials: "same-origin",
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -147,7 +147,7 @@ export const deleteSeriesById = async (id: number) => {
     method: "DELETE",
     headers: { Accept: "application/json" },
     mode: "cors",
-    credentials: "same-origin",
+    credentials: "include",
   });
 
   if (!response.ok) {
