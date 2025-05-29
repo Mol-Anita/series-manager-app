@@ -16,7 +16,7 @@ const SeriesList = ({ seriesList, onDelete, pageNumber }) => {
   return (
     <section className="bg-neutral-950 p-4 my-5">
       <div className="p-4">
-        <ul className="flex flex-wrap justify-start">
+        <ul className="flex flex-wrap justify-evenly">
           {pageNumber == 1 && <li key="000" className="flex-none m-2">
             <AddCard onClick={handleAddButtonClick} />
           </li>}
@@ -33,7 +33,7 @@ const SeriesList = ({ seriesList, onDelete, pageNumber }) => {
           })}
         </ul>
       </div>
-      {pageNumber > 1 && (<button className="fixed bottom-10 right-10 bg-neutral-600 text-white p-4 rounded-full shadow-lg">
+      {pageNumber > 1 && (<button onClick={handleAddButtonClick} className="fixed bottom-10 right-10 bg-neutral-600 text-white p-4 rounded-full shadow-lg hover:cursor-pointer">
         +
       </button>)}
     </section>

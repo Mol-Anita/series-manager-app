@@ -2,12 +2,12 @@
 
 import SeriesCardSection from "../components/SeriesCardSection";
 import { useQuery } from "@tanstack/react-query";
-import { fetchSeries } from "../lib/api/apiCallingFunctions";
+import { fetchSeries } from "../lib/services/seriesService";
 
 export default function Home() {
   const { data, isFetching, error, status } = useQuery({
     queryKey: ['series'],
-    queryFn: () => fetchSeries({}),
+    queryFn: () => fetchSeries(1, 4, {}),
     retry: 1,
     refetchOnWindowFocus: false,
     staleTime: 30000,
@@ -26,13 +26,13 @@ export default function Home() {
     return <div className="text-white">Loading series...</div>;
   }
 
-  if (!data || data.length === 0) {
+  if (!data || data.result.length === 0) {
     return <div className="text-white">No series found</div>;
   }
 
   return (
     <div>
-      <SeriesCardSection heading={"Recently Watched"} seriesList={data}/>
+      <SeriesCardSection heading={"Recently Watched"} seriesList={data.result}/>
     </div>
   );
 }

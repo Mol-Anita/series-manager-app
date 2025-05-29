@@ -35,6 +35,12 @@ const nextConfig = {
       },
     },
   },
+  images: {
+    domains: ['localhost'], // or your actual API domain if not localhost
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 module.exports = nextConfig; 

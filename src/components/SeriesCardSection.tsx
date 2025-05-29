@@ -16,9 +16,6 @@ const SeriesCardSection = ({ heading, seriesList }: SeriesCardSectionProps) => {
     return null;
   }
 
-  const series = seriesList.slice(0, 4);
-  console.log('SeriesCardSection - Sliced series:', series);
-
   return (
     <section className="bg-neutral-950 p-4 my-5">
       <div className="p-4">
@@ -27,7 +24,7 @@ const SeriesCardSection = ({ heading, seriesList }: SeriesCardSectionProps) => {
         </h2>
 
         <ul className="flex flex-row justify-between px-6">
-          {series.map((seriesItem) => {
+          {seriesList.map((seriesItem) => {
             console.log('SeriesCardSection - Rendering series:', seriesItem);
             return (
               <li key={`series-${seriesItem.Id}`} className="flex-none">

@@ -8,25 +8,42 @@ const SeriesCard = ({ series, onDelete, isOnMaster }) => {
   if (!series) return null;
 
   const imageUrl = series.ImagePath
-  ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/seriesCoverImages/${series.ImagePath}`
+    ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/seriesCoverImages/${series.ImagePath}`
     : "/images/mockup.jpg";
 
   return (
     <div className="bg-neutral-900 text-white rounded-2xl flex flex-col p-5 w-[310px] h-[500px] hover:cursor-pointer">
-      <div className="flex justify-center items-center w-full h-[360px] relative overflow-hidden rounded-lg">
-        <img
-          src={imageUrl}
-          alt={series.Title}
-          className="w-[260px] h-full object-cover"
-        />
-        {series.IsFavourite && (
-          <div className="absolute top-2 right-2">
-            <StarIcon className="h-6 w-6 text-yellow-400" />
+       {!isOnMaster && (
+          <div className="mb-2 flex justify-between items-center">
+            <Link
+              href={`/edit-series/${series.Id}`}
+              className="text-sm text-blue-400 hover:underline"
+            >
+              Edit
+            </Link>
+            <DeleteButton seriesId={series.Id} onDelete={onDelete} />
           </div>
         )}
-      </div>
+      <Link href={`/series/${series.Id}`}>
+        <div className="flex justify-center items-center w-full h-[330px] relative overflow-hidden rounded-lg">
+          <img
+            src={imageUrl}
+            alt={series.Title}
+            className="w-[260px] h-full object-cover"
+          />
+          {series.IsFavourite && (
+            <div className="absolute top-2 right-2">
+              <StarIcon className="h-6 w-6 text-yellow-400" />
+            </div>
+          )}
+        </div>
+      </Link>
+
       <div className="p-4">
-        <h3 className="text-xl font-semibold mb-2">{series.Title}</h3>
+        <Link href={`/series/${series.Id}`}>
+          <h3 className="text-xl font-semibold mb-2">{series.Title}</h3>
+        </Link>
+
         <div className="relative overflow-hidden">
           <div className="flex gap-2 whitespace-nowrap overflow-hidden text-ellipsis">
             {series.Genres?.map((genre, index) => (
@@ -40,6 +57,7 @@ const SeriesCard = ({ series, onDelete, isOnMaster }) => {
           </div>
           <div className="absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-neutral-900 to-transparent" />
         </div>
+
         <div className="flex justify-between items-center mt-2">
           <span className="text-sm text-gray-400">
             {series.TotalSeasons || 0}{" "}
@@ -50,15 +68,8 @@ const SeriesCard = ({ series, onDelete, isOnMaster }) => {
           </span>
         </div>
 
+       
       </div>
-              {!isOnMaster && (
-        <div className="mt-4 flex justify-between items-center">
-          <Link href={`/edit-series/${series.Id}`} className="text-sm text-blue-400 hover:underline">
-            Edit
-          </Link>
-          <DeleteButton seriesId={series.Id} onDelete={onDelete} />
-        </div>
-      )}
     </div>
   );
 };

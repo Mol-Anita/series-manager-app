@@ -3,6 +3,7 @@ import { Inter, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "../components/Header";
 import QueryProvider from "../components/QueryProvider"; // Import new QueryProvider
+import { AuthProvider } from "../context/AuthContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -34,11 +35,13 @@ export default function Layout({
 }>) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className="antialiased">
-        <QueryProvider>
-          <Header />
-          {children}
-        </QueryProvider>
+      <body className="antialiased bg-black">
+        <AuthProvider>
+          <QueryProvider>
+            <Header />
+            {children}
+          </QueryProvider>
+        </AuthProvider>
       </body>
     </html>
   );

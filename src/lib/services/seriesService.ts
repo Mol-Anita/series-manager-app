@@ -1,5 +1,5 @@
-import { Series, Genre } from "@/types/series";
-import { SeriesStatus } from "@/types/seriesStatus";
+import { Series } from "@/types/series";
+
 
 export type SeriesFilters = {
   genres?: string[];
@@ -18,11 +18,25 @@ type SeriesData = {
   Status: string;
 };
 
-const API_BASE_URL = "http://localhost:5001/api";
+export interface FetchSeriesResponse {
+  result: Series[];
+  meta: {
+    TotalCount: number;
+    PageSize: number;
+    CurrentPage: number;
+    TotalPages: number;
+    HasNext: boolean;
+    HasPrevious: boolean;
+  };
+}
 
-export const fetchSeries = async (options?: SeriesFilters) => {
+
+export const fetchSeries = async (pageNumber: number, pageSize: number, options?: SeriesFilters): Promise<FetchSeriesResponse> => {
   try {
-    const url = new URL(`${API_BASE_URL}/series`); 
+    const url = new URL(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/series`); 
+
+    url.searchParams.append("pageNumber", pageNumber.toString());
+    url.searchParams.append("pageSize", pageSize.toString());
 
     if (options?.genres && options.genres.length > 0) options.genres.forEach((genre) => url.searchParams.append("genres", genre));
     if (options?.search) url.searchParams.set("search", options.search);
@@ -39,6 +53,7 @@ export const fetchSeries = async (options?: SeriesFilters) => {
       },
       mode: 'cors',
     });
+    const metaRaw = response.headers.get("X-Pagination");
     
     console.log('Response status:', response.status);
     
@@ -50,14 +65,31 @@ export const fetchSeries = async (options?: SeriesFilters) => {
     
     const data = await response.json();
     console.log('API Response:', data);
+
+    let meta = null;
+
+    if (metaRaw) {
+      try {
+        meta = JSON.parse(metaRaw);
+      } catch (error) {
+        console.warn("Failed to parse X-Pagination header:", error);
+      }
+    }
     
     if (!data.Result) {
       console.warn('No Result field in response:', data);
-      return [];
+      return {result: [], meta: {
+        TotalCount: 0,
+        PageSize: 0,
+        CurrentPage: 0,
+        TotalPages: 0,
+        HasNext: false,
+        HasPrevious: false
+      }};
     }
     
     console.log('Returning series data:', data.Result);
-    return data.Result || [];
+    return { result: data.Result, meta }
   } catch (error) {
     console.error('Error fetching series:', error);
     if (error instanceof Error) {
@@ -69,11 +101,12 @@ export const fetchSeries = async (options?: SeriesFilters) => {
 };
 
 export const getSeriesById = async (id: number) => {
-  const response = await fetch(`${API_BASE_URL}/series/${id}`);
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/series/${id}`);
   if (!response.ok) {
     throw new Error(`Failed to fetch series: ${response.statusText}`);
   }
   const seriesData = await response.json();
+  console.log(seriesData);
 
   return seriesData.Result;
 };
@@ -82,7 +115,7 @@ export const saveSeries = async (data: SeriesData) => {
   try {
     console.log('Sending data to server:', data);
     
-    const response = await fetch(`${API_BASE_URL}/series`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/series`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -111,7 +144,7 @@ export const saveSeries = async (data: SeriesData) => {
 };
 
 export const updateSeriesById = async (id: number, data: SeriesData) => {
-  const response = await fetch(`${API_BASE_URL}/series/${id}`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/series/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -127,7 +160,7 @@ export const updateSeriesById = async (id: number, data: SeriesData) => {
 };
 
 export const deleteSeriesById = async (id: number) => {
-  const response = await fetch(`${API_BASE_URL}/series/${id}`,{
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/series/${id}`,{
     method: "DELETE",
   });
 
@@ -138,86 +171,12 @@ export const deleteSeriesById = async (id: number) => {
   return response.json();
 };
 
-export const getGenreData = async () => {
-  const genreData: Record<string, number> = {
-    "Crime": 0,
-    "Drama": 0,
-    "Thriller": 0,
-    "Sci-Fi": 0,
-    "Horror": 0,
-    "Mystery": 0,
-    "Fantasy": 0,
-    "Adventure": 0,
-    "Action": 0,
-    "Comedy": 0,
-    "Romance": 0,
-    "Dark Comedy": 0,
-    "Animation": 0,
-    "Anthology": 0,
-    "Biography": 0,
-    "Anime": 0,
-  };
-
-  const series = await fetchSeries();
-  series.forEach((series: Series) => {
-    series.Genres.forEach((genre: string) => {
-      genreData[genre]++;
-    });
-  });
-
-  const formattedGenreData = Object.entries(genreData).map(([name, value]) => ({
-    value,
-    name,
-  }));
-
-  return formattedGenreData;
-};
-
-export const updateChartDataAsync = async (
-  currentData: { name: string; value: number }[]
-): Promise<{ name: string; value: number }[]> => {
-  return new Promise((resolve) => {
-    setTimeout(async () => {
-      if (currentData.length === 0) {
-        resolve(currentData);
-        return;
-      }
-
-      const series = await fetchSeries();
-      if (series.length === 0) {
-        resolve(currentData);
-        return;
-      }
-
-      const randomIndex = Math.floor(Math.random() * series.length);
-      const randomSeries = series[randomIndex];
-      
-      if (randomSeries.genres.length > 0) {
-        const newGenre = randomSeries.genres[0].name;
-        const existingGenreIndex = currentData.findIndex((item) => item.name === newGenre);
-
-        let updatedData;
-        if (existingGenreIndex !== -1) {
-          updatedData = currentData.map((item, index) =>
-            index === existingGenreIndex ? { ...item, value: item.value + 1 } : item
-          );
-        } else {
-          updatedData = [...currentData, { name: newGenre, value: 1 }];
-        }
-
-        resolve(updatedData);
-      } else {
-        resolve(currentData);
-      }
-    }, 500);
-  });
-};
 
 export const classifySeriesLength = (series: { totalSeasons: number }): number => {
   if (!series || !series.totalSeasons) return 1;
 
   const totalSeasons = series.totalSeasons;
-  const avgLength = 5; // Default average length
+  const avgLength = 5; 
 
   const mediumRange = avgLength * 0.33;
 
@@ -226,3 +185,7 @@ export const classifySeriesLength = (series: { totalSeasons: number }): number =
 
   return 2;
 };
+
+
+
+

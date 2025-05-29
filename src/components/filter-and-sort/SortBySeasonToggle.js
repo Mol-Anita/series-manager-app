@@ -4,9 +4,9 @@ const SortBySeasonsToggle = ({ value, onChange }) => {
   };
 
   return (
-    <div className="inline-flex items-center justify-between rounded-full bg-transparent w-60 h-9 px-3 py-1.5 text-white font-light text-sm/6 outline-1 -outline-offset-1 outline-neutral-700">
+    <div className="inline-flex items-center justify-between rounded-full bg-transparent w-60 h-10 px-5 py-2.5 text-white font-light text-sm/6 outline-1 -outline-offset-1 outline-neutral-700">
       <label className="flex items-center w-full justify-between cursor-pointer">
-        <span className="mr-3 text-white font-light text-sm">
+        <span className="mr-3 text-white font-medium text-sm py-2.5">
           Sort by seasons
         </span>
         <div className="relative">

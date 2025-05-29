@@ -28,12 +28,12 @@ const InputForms = ({ title, apiCall, defaultValues, isEditForm, id=undefined })
 
       const formattedData = {
         Id: parseInt(id, 10) || 0,
-        Title: data.title,
-        Description: data.description,
-        TotalSeasons: parseInt(data.totalSeasons, 10),
-        ImagePath: data.image || "/images/mockup.jpg", // Use the URL directly or default image
-        Genres: data.genre.split(",").map((g) => g.trim()),
-        Status: data.status
+        Title: data.Title,
+        Description: data.Description,
+        TotalSeasons: parseInt(data.TotalSeasons, 10),
+        ImagePath: data.ImagePath, // Use the URL directly or default image
+        Genres: data.Genres.split(",").map((g) => g.trim()),
+        Status: data.Status
       };
 
       console.log("Form data before submission:", data);
@@ -119,9 +119,9 @@ const InputForms = ({ title, apiCall, defaultValues, isEditForm, id=undefined })
           <InputField
             type="text"
             label="Series Title"
-            id="title"
+            id="Title"
             placeholder="ex. Game of Thrones"
-            inputProps={register("title", {
+            inputProps={register("Title", {
               required: "Series title is required",
             })}
             errors={errors}
@@ -129,9 +129,9 @@ const InputForms = ({ title, apiCall, defaultValues, isEditForm, id=undefined })
           <InputField
             type="text"
             label="Genres"
-            id="genre"
+            id="Genres"
             placeholder="ex. Fantasy, Drama, ..."
-            inputProps={register("genre", {
+            inputProps={register("Genres", {
               required: "Genre is required",
               validate: validateGenre,
             })}
@@ -140,25 +140,25 @@ const InputForms = ({ title, apiCall, defaultValues, isEditForm, id=undefined })
           <InputField
             type="text"
             label="Description"
-            id="description"
+            id="Description"
             placeholder="Brief description"
-            inputProps={register("description", {
+            inputProps={register("Description", {
               required: "Description is required",
             })}
             errors={errors}
           />
           <ImageInput
             label="Cover image URL"
-            id="image"
-            inputProps={register("image", imageConstraints)}
+            id="ImagePath"
+            inputProps={register("ImagePath", imageConstraints)}
             errors={errors}
           />
           <InputField
             type="text"
             label="Number of seasons"
-            id="totalSeasons"
+            id="TotalSeasons"
             placeholder="ex. 4"
-            inputProps={register("totalSeasons", {
+            inputProps={register("TotalSeasons", {
               required: "Season number is required",
               pattern: {
                 value: /[0-9]{1,}/,
@@ -169,7 +169,7 @@ const InputForms = ({ title, apiCall, defaultValues, isEditForm, id=undefined })
           />
           <StatusInput
             errors={errors}
-            register={register("status", {
+            register={register("Status", {
               required: "Status is required",
             })}
           />

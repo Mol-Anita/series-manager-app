@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import SeriesForm from "./SeriesForm";
-import { updateSeriesById, getSeriesById } from "../../lib/api/apiCallingFunctions";
+import { updateSeriesById, getSeriesById } from "../../lib/services/seriesService";
 
 const EditSeriesForm = ({ seriesId }) => {
   const [selectedSeries, setSelectedSeries] = useState(null);
@@ -23,13 +23,13 @@ const EditSeriesForm = ({ seriesId }) => {
   }
 
   const defaultValues = {
-    id: seriesId,
-    title: selectedSeries.Title,
-    genre: selectedSeries.Genres.join(", "),
-    description: selectedSeries.Description,
-    image: "",
-    totalSeasons: selectedSeries.TotalSeasons,
-    status: selectedSeries.Status,
+    Id: seriesId,
+    Title: selectedSeries.Title,
+    Genres: selectedSeries.Genres.join(", "),
+    Description: selectedSeries.Description,
+    ImagePath: "",
+    TotalSeasons: selectedSeries.TotalSeasons,
+    Status: selectedSeries.Status,
   };
 
   return (
