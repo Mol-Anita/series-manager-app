@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { loginUser } from "@/lib/services/authService";
 import { AuthFormData } from "@/types/AuthFormTypes";
 import { useAuth } from "@/contexts/AuthContext";
+import TwoFactorVerification from "./TwoFactorVerification";
 
 const LoginForm = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<AuthFormData>();
@@ -15,29 +16,65 @@ const LoginForm = () => {
   const { updateAuthState } = useAuth();
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [show2FA, setShow2FA] = useState(false);
+  const [tempToken, setTempToken] = useState("");
 
   const onSubmit = async (data: AuthFormData) => {
     setIsSubmitting(true);
     setError("");
     try {
-      // Only send email and password to the backend
       const loginData = {
         Email: data.Email,
         Password: data.Password
       };
       const result = await loginUser(loginData);
-      updateAuthState(true, result.username);
+      
+      if (result.RequiresTwoFactor) {
+        setTempToken(result.Token);
+        setShow2FA(true);
+        return;
+      }
+
+      if (!result.Token) {
+        setError("Login failed: No token received");
+        return;
+      }
+
+      updateAuthState(true, result.User.Username);
       router.push("/");
     } catch (err) {
+      console.error("Login error:", err);
       setError(
-        typeof err === "object" && err !== null && "message" in err
-          ? String((err as { message?: unknown }).message)
-          : "Login failed"
+        err instanceof Error 
+          ? err.message 
+          : "An unexpected error occurred during login"
       );
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const handle2FASuccess = () => {
+    updateAuthState(true, "");
+    router.push("/");
+  };
+
+  const handle2FAError = (error: string) => {
+    setError(error);
+    setShow2FA(false);
+  };
+
+  if (show2FA) {
+    return (
+      <div className="flex flex-col p-14 bg-stone-900 rounded-2xl w-3xl h-fit">
+        <TwoFactorVerification
+          tempToken={tempToken}
+          onVerificationSuccess={handle2FASuccess}
+          onVerificationError={handle2FAError}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col p-14 bg-stone-900 rounded-2xl w-3xl h-fit">
