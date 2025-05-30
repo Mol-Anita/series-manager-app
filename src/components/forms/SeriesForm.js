@@ -8,7 +8,7 @@ import StatusInput from "./StatusInput";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-const InputForms = ({ title, apiCall, defaultValues, isEditForm, id=undefined }) => {
+const InputForms = ({ title, apiCall, defaultValues, isEditForm, id=undefined, onSuccess, onError }) => {
   const router = useRouter();
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,11 +47,18 @@ const InputForms = ({ title, apiCall, defaultValues, isEditForm, id=undefined })
         await apiCall(formattedData);
       }
       
-
-      router.push("/my-series");
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        router.push("/my-series");
+      }
     } catch (error) {
       console.error("Form submission error:", error);
-      setError(error.message || "An error occurred while saving the series");
+      const errorMessage = error.message || "An error occurred while saving the series";
+      setError(errorMessage);
+      if (onError) {
+        onError(errorMessage);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -108,7 +115,7 @@ const InputForms = ({ title, apiCall, defaultValues, isEditForm, id=undefined })
 
   return (
     <div className="flex flex-col p-14 bg-stone-900 rounded-2xl w-3xl h-fit">
-      <h1 className=" font-bold text-3xl">{title}</h1>
+      <h1 className="font-bold text-3xl">{title}</h1>
       <div className="py-5">
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">

@@ -1,37 +1,54 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from 'react';
 import { getMonitoredUsers } from '../../../lib/services/adminService';
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { MonitoredUser } from '../../../types/monitoredUser';
+import { useRouter } from 'next/navigation';
 
 export default function MonitoredUsersPage() {
   const [users, setUsers] = useState<MonitoredUser[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth(); // assumes useAuth() provides token + role
+  const { isLoggedIn } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    if (user?.role !== 'Admin') {
+    if (!isLoggedIn) {
+      router.push('/login');
       return;
     }
 
-    getMonitoredUsers(user.token!)
-      .then(setUsers)
-      .catch((err) => console.error(err))
-      .finally(() => setLoading(false));
-  }, [user]);
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          throw new Error('No authentication token found');
+        }
+        const data = await getMonitoredUsers(token);
+        setUsers(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (!user || user.token || user?.role !== 'Admin') {
-    return <p>Access denied. Admins only.</p>;
+    fetchUsers();
+  }, [isLoggedIn, router]);
+
+  if (!isLoggedIn) {
+    return null;
   }
 
-  if (loading) return <p>Loading monitored users...</p>;
+  if (loading) {
+    return <div className="text-white p-6">Loading monitored users...</div>;
+  }
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Monitored Users</h1>
+      <h1 className="text-2xl font-bold mb-4 text-white">Monitored Users</h1>
       {users.length === 0 ? (
-        <p>No suspicious activity found.</p>
+        <p className="text-white">No suspicious activity found.</p>
       ) : (
         <table className="w-full border border-gray-300">
           <thead>
@@ -45,9 +62,9 @@ export default function MonitoredUsersPage() {
           <tbody>
             {users.map((u) => (
               <tr key={u.id} className="border-t border-gray-300">
-                <td className="p-2">{u.username}</td>
-                <td className="p-2">{u.email}</td>
-                <td className="p-2">{new Date(u.lastActivity).toLocaleString()}</td>
+                <td className="p-2 text-white">{u.username}</td>
+                <td className="p-2 text-white">{u.email}</td>
+                <td className="p-2 text-white">{new Date(u.lastActivity).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>

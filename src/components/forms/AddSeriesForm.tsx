@@ -1,19 +1,45 @@
 "use client";
 
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import SeriesForm from "./SeriesForm";
 import { saveSeries } from "@/lib/services/seriesService";
 
 const AddSeriesForm = () => {
+  const router = useRouter();
+  const { isLoggedIn } = useAuth();
+
   const defaultValues = {
-    title: "",
-    genre: "",
-    description: "",
-    image: "",
-    totalSeasons: "",
-    status: "Currently Watching",
+    Title: "",
+    Genres: "",
+    Description: "",
+    ImagePath: "",
+    TotalSeasons: "",
+    Status: "Currently Watching",
   };
 
-  return <SeriesForm title="Add series" apiCall={saveSeries} defaultValues={defaultValues} isEditForm={false}/>;
+  const handleSaveSuccess = () => {
+    router.push('/my-series');
+  };
+
+  const handleSaveError = (error: string) => {
+    console.error('Failed to save series:', error);
+  };
+
+  if (!isLoggedIn) {
+    return null;
+  }
+
+  return (
+    <SeriesForm 
+      title="Add series" 
+      apiCall={saveSeries} 
+      defaultValues={defaultValues} 
+      isEditForm={false}
+      onSuccess={handleSaveSuccess}
+      onError={handleSaveError}
+    />
+  );
 };
 
 export default AddSeriesForm;
